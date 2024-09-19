@@ -1,0 +1,6 @@
+*.out
+*.o
+*.clangd
+*.json
+*.vscode
+*.cache

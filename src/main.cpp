@@ -1,6 +1,5 @@
-#include "../MyLibraries/headers/systemdata.h"
+#include "../../MyLibraries/headers/systemdata.h"
 #include "catmull.hpp"
-#include "point.hpp"
 #include <SFML/Graphics.hpp>
 #include <cstddef>
 #include <cstdio>
@@ -10,8 +9,7 @@
 
 const int HEIGHT = 900;
 const int WIDTH = 1600;
-const int POINT_RADIUS = 10;
-const size_t POINTS_C = 4;
+const size_t POINTS_C = 20;
 
 int main()
 {
@@ -19,21 +17,12 @@ int main()
 
     srand( (unsigned int)time( NULL));
 
-    Catmull cat;
+    CatmullRom cat;
     cat.addManyPoints( POINTS_C, WIDTH, HEIGHT);
-
-    // cat.addPoint( Point( 100, 100));
-    // cat.addPoint( Point( 1500, 100));
-    // cat.addPoint( Point( 100, 1000));
-    // cat.addPoint( Point( 100, 100));
-
-    for ( auto i : cat.getPoints() )
-    {
-        printf( "%f %f\n", i.x_, i.y_);
-    }
 
     double t = 0.001f;
     window.clear( sf::Color::Black);
+
     while ( window.isOpen() )
     {
         sf::Event event;
@@ -45,10 +34,8 @@ int main()
             }
         }
 
-        Point next_point = cat.interpolation( t);
-        Point next = cat.getPoints()[size_t( t)];
         sf::CircleShape circle = createCircle( cat, t);
-        circle.setPosition( sf::Vector2f( float( next_point.x_), float( next_point.y_)));
+        window.draw( circle);
 
         t += 0.001f;
         if ( size_t( t) >= POINTS_C - 3 )
@@ -57,11 +44,7 @@ int main()
         }
 
         sf::sleep( sf::microseconds( 1000));
-        sf::CircleShape n( POINT_RADIUS);
-        n.setFillColor( sf::Color::Red);
-        n.setPosition( next.x_, next.y_);
-        window.draw( circle);
-        window.draw( n);
+
         window.display();
     }
 

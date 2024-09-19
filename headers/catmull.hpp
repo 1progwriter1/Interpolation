@@ -5,13 +5,14 @@
 #include <vector>
 #include <SFML/Graphics.hpp>
 #include "point.hpp"
+#include "color.hpp"
 
-class Catmull
+class CatmullRom
 {
     std::vector<Point> points_;
 public:
-    Catmull() = default;
-    ~Catmull() = default;
+    CatmullRom() = default;
+    ~CatmullRom() = default;
 
     void addPoint( Point);
     void addManyPoints( size_t num_of_points, const int scr_w, const int scr_h);
@@ -21,6 +22,6 @@ public:
     Point interpolation( double t);
 };
 
-sf::CircleShape createCircle( Catmull &cat, double t);
+sf::CircleShape createCircle( CatmullRom &cat, double t);
 
 #endif // CATMULL_ROM_FUNCTIONS

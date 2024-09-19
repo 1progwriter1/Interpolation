@@ -1,15 +1,19 @@
 #include "catmull.hpp"
+#include "color.hpp"
 #include "point.hpp"
+#include <cassert>
 #include <cstddef>
 #include <cstdlib>
 
-void Catmull::addPoint( Point point)
+const int POINT_RADIUS = 3;
+
+void CatmullRom::addPoint( Point point)
 {
     points_.push_back( point);
 }
 
 
-void Catmull::addManyPoints( size_t num_of_points, const int scr_w, const int scr_h)
+void CatmullRom::addManyPoints( size_t num_of_points, const int scr_w, const int scr_h)
 {
     addPoint( Point( rand() % scr_w, rand() % scr_h));
     for ( size_t i = 1; i < num_of_points; i++ )
@@ -19,12 +23,12 @@ void Catmull::addManyPoints( size_t num_of_points, const int scr_w, const int sc
 }
 
 
-const std::vector<Point> &Catmull::getPoints() const
+const std::vector<Point> &CatmullRom::getPoints() const
 {
     return points_;
 }
 
-Point Catmull::interpolation( double t)
+Point CatmullRom::interpolation( double t)
 {
     size_t ind = size_t( t);
     t -= ind;
@@ -48,10 +52,15 @@ Point Catmull::interpolation( double t)
 }
 
 
-sf::CircleShape createCircle( Catmull *cat, double t)
+sf::CircleShape createCircle( CatmullRom &cat, double t)
 {
-    if ( fabs( double( size_t( t)) - t) < 1e-9)
-    {
+    size_t ind = size_t( t);
+    assert( ind < cat.getPoints().size() - 3 );
 
-    }
+    sf::CircleShape circle( POINT_RADIUS);
+    Point point = cat.interpolation( t);
+    circle.setPosition( float( point.x_), float( point.y_));
+    circle.setFillColor( (Color( sf::Color::Yellow) * (t - ind)).getColor());
+
+    return circle;;
 }

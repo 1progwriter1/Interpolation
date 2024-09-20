@@ -5,11 +5,19 @@
 #include <cstddef>
 #include <cstdlib>
 
+
 const int POINT_RADIUS = 3;
+
+
+CatmullRom::CatmullRom( size_t init_size)
+    :   points_( init_size)
+{
+
+}
 
 void CatmullRom::addPoint( Point point)
 {
-    points_.push_back( point);
+    base_points_.push_back( point);
 }
 
 
@@ -25,7 +33,7 @@ void CatmullRom::addManyPoints( size_t num_of_points, const int scr_w, const int
 
 const std::vector<Point> &CatmullRom::getPoints() const
 {
-    return points_;
+    return base_points_;
 }
 
 Point CatmullRom::interpolation( double t)
@@ -44,23 +52,45 @@ Point CatmullRom::interpolation( double t)
     double h11 =  t3   - t2;
 
 
-    Point m0 = (points_[ind + 2] - points_[ind + 0]) / 2;
-    Point m1 = (points_[ind + 3] - points_[ind + 1]) / 2;
+    Point m0 = (base_points_[ind + 2] - base_points_[ind + 0]) / 2;
+    Point m1 = (base_points_[ind + 3] - base_points_[ind + 1]) / 2;
 
-    return  h00 * points_[ind + 1] + h10 * m0 +
-            h01 * points_[ind + 2] + h11 * m1;
+    return  h00 * base_points_[ind + 1] + h10 * m0 +
+            h01 * base_points_[ind + 2] + h11 * m1;
 }
 
 
-sf::CircleShape createCircle( CatmullRom &cat, double t)
+WindowPoint createPoint( CatmullRom &cat, double t)
 {
     size_t ind = size_t( t);
     assert( ind < cat.getPoints().size() - 3 );
 
-    sf::CircleShape circle( POINT_RADIUS);
     Point point = cat.interpolation( t);
-    circle.setPosition( float( point.x_), float( point.y_));
-    circle.setFillColor( (Color( sf::Color::Yellow) * (t - ind)).getColor());
 
-    return circle;;
+    WindowPoint w_point;
+    w_point.x = float( point.x_);
+    w_point.y = float( point.y_);
+    w_point.is_found = true;
+
+    return w_point;
+}
+
+
+WindowPoint &CatmullRom::operator[]( double t)
+{
+    return points_[size_t( t * 1 / T_STEP)];
+}
+
+
+void CatmullRom::updateWindow( sf::RenderWindow &window, double t)
+{
+    size_t cur_ind = size_t( t * 1 / T_STEP);
+    assert( cur_ind < points_.size() );
+
+    sf::CircleShape circe( POINT_RADIUS);
+    circe.setPosition( points_[cur_ind].x, points_[cur_ind].y);
+    circe.setFillColor( ( Color( sf::Color::Yellow) * ( t - size_t( t))).getColor());
+
+    window.draw( circe);
+    window.display();
 }

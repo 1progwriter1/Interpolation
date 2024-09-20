@@ -11,16 +11,17 @@ const int HEIGHT = 900;
 const int WIDTH = 1600;
 const size_t POINTS_C = 20;
 
+
 int main()
 {
     sf::RenderWindow window( sf::VideoMode( WIDTH, HEIGHT), "hello");
 
     srand( (unsigned int)time( NULL));
 
-    CatmullRom cat;
+    CatmullRom cat( size_t( 1 / T_STEP * (POINTS_C - 3)));
     cat.addManyPoints( POINTS_C, WIDTH, HEIGHT);
 
-    double t = 0.001f;
+    double t = 0.000f;
     window.clear( sf::Color::Black);
 
     while ( window.isOpen() )
@@ -34,18 +35,19 @@ int main()
             }
         }
 
-        sf::CircleShape circle = createCircle( cat, t);
-        window.draw( circle);
+        if ( !cat[t].is_found )
+        {
+            cat[t] = createPoint( cat, t);
+            cat.updateWindow( window, t);
+        }
 
-        t += 0.001f;
+        t += T_STEP;
         if ( size_t( t) >= POINTS_C - 3 )
         {
             t = 0;
         }
 
-        sf::sleep( sf::microseconds( 1000));
-
-        window.display();
+        sf::sleep( sf::microseconds( 500));
     }
 
     return SUCCESS;

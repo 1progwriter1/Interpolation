@@ -1,6 +1,15 @@
 #ifndef POINT_FUNCTIONS
 #define POINT_FUNCTIONS
 
+
+struct WindowPoint
+{
+    float x = 0;
+    float y = 0;
+    bool is_found = false;
+};
+
+
 class Point
 {
 public:

@@ -28,13 +28,7 @@ Color operator*( const Color &cl, double cf)
 
 Color operator*( double cf, const Color &cl)
 {
-    const sf::Color &old = cl.getColor();
-
-    uint8_t r = uint8_t( std::min( uint64_t( old.r * cf), uint64_t( 255)));
-    uint8_t g = uint8_t( std::min( uint64_t( old.g * cf), uint64_t( 255)));
-    uint8_t b = uint8_t( std::min( uint64_t( old.b * cf), uint64_t( 255)));
-
-    return Color( r, g, b, old.a);
+    return cl * cf;
 }
 
 

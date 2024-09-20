@@ -5,23 +5,26 @@
 #include <vector>
 #include <SFML/Graphics.hpp>
 #include "point.hpp"
-#include "color.hpp"
+
+const double T_STEP = 0.001;
 
 class CatmullRom
 {
-    std::vector<Point> points_;
+    std::vector<WindowPoint> points_;
+    std::vector<Point> base_points_;
 public:
-    CatmullRom() = default;
+    CatmullRom( size_t init_size);
     ~CatmullRom() = default;
 
-    void addPoint( Point);
+    void addPoint( Point point);
     void addManyPoints( size_t num_of_points, const int scr_w, const int scr_h);
 
     const std::vector<Point> &getPoints() const;
-
     Point interpolation( double t);
+    void updateWindow( sf::RenderWindow &window, double t);
+    WindowPoint &operator[]( double t);
 };
 
-sf::CircleShape createCircle( CatmullRom &cat, double t);
+WindowPoint createPoint( CatmullRom &cat, double t);
 
 #endif // CATMULL_ROM_FUNCTIONS
